@@ -1,0 +1,1153 @@
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#11100e;--ink2:#191714;--cream:#eee5d5;--cream2:#d8ccb8;--muted:#a79c8d;--line:rgba(238,229,213,.15);--glass:rgba(238,229,213,.065);--shadow:0 30px 80px rgba(0,0,0,.3)}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--cream);font-family:Vazirmatn,Arial,sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 70% 20%,rgba(238,229,213,.08),transparent 28%),radial-gradient(circle at 15% 80%,rgba(185,151,105,.06),transparent 25%);pointer-events:none;z-index:-2}
+#ambientCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:-1;opacity:.72}
+.noise{position:fixed;inset:0;opacity:.08;pointer-events:none;z-index:20;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E")}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit}
+.section-shell{width:min(1260px,calc(100% - 48px));margin:auto;position:relative}
+.site-header{height:92px;position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;background:linear-gradient(180deg,rgba(17,16,14,.88),rgba(17,16,14,.22));backdrop-filter:blur(14px);border-bottom:1px solid rgba(238,229,213,.07)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:30px;height:30px;border:1px solid var(--cream2);border-radius:50%;display:grid;place-items:center;font:600 12px "Playfair Display";letter-spacing:1px}
+.brand strong{display:block;font-size:30px}.brand small{display:block;color:var(--muted);font-size:15px;letter-spacing:10px;margin-top:2px}
+.nav{display:flex;align-items:center;gap:30px;font-size:20px;color:#c9bead}
+.nav a{transition:.3s}.nav a:hover{color:var(--cream)}
+.nav-cta{padding:11px 17px;border:1px solid rgba(238,229,213,.35);border-radius:999px;color:var(--cream)!important}
+.menu-toggle{display:none;background:none;border:0;color:var(--cream);width:42px}.menu-toggle span{display:block;width:24px;height:1px;background:var(--cream);margin:7px auto}
+.hero{min-height:100vh;padding-top:145px;display:grid;grid-template-columns:1fr 1.05fr;align-items:center;gap:5vw}
+.hero-copy{padding-bottom:50px}.eyebrow{font-size:10px;letter-spacing:2.5px;color:var(--muted);display:block}
+h1,h2,h3{font-weight:500;line-height:1.08}
+h1{font-size:clamp(75px,7.3vw,108px);letter-spacing:-3px;margin:22px 0}
+h1 em,h2 em{font-family:"Playfair Display",serif;font-weight:500;color:var(--cream2);font-style:italic}
+.hero-lead{max-width:1000px;color:#b9ae9f;line-height:2;font-size:16px}
+.hero-actions{display:flex;gap:50px;margin-top:35px;flex-wrap:wrap}
+.button{min-height:48px;padding:0 22px;border-radius:2px;display:inline-flex;align-items:center;justify-content:center;gap:16px;border:1px solid transparent;cursor:pointer;transition:.35s}
+.button-solid{background:var(--cream);color:var(--ink)}.button-solid:hover{transform:translateY(-3px);box-shadow:0 15px 35px rgba(238,229,213,.12)}
+.button-ghost{border-color:var(--line);color:var(--cream2)}.button-ghost:hover{border-color:var(--cream2)}
+.hero-stage{height:min(690px,72vh);min-height:520px;position:relative}
+.portrait-placeholder{position:absolute;inset:7% 13% 4% 18%;border:1px solid rgba(238,229,213,.2);overflow:hidden;background:linear-gradient(145deg,#29241d,#11100e 60%,#332b20);display:flex;align-items:flex-end;justify-content:flex-start;padding:28px;color:#8e8271;font-size:11px;letter-spacing:3px}
+.portrait-placeholder:before{content:"";position:absolute;width:70%;height:78%;right:-20%;top:8%;border-radius:50% 50% 12% 12%;background:linear-gradient(145deg,rgba(238,229,213,.2),rgba(120,100,75,.05));filter:blur(1px)}
+.portrait-line{position:absolute;width:1px;height:85%;right:22%;top:5%;background:linear-gradient(transparent,var(--cream2),transparent);opacity:.45}
+.orb{position:absolute;border:1px solid rgba(238,229,213,.16);border-radius:50%;z-index:-1}.orb-a{width:390px;height:390px;right:-30px;top:8%}.orb-b{width:220px;height:220px;left:0;bottom:4%}
+.glass{background:linear-gradient(135deg,rgba(238,229,213,.1),rgba(238,229,213,.025));border:1px solid rgba(238,229,213,.2);backdrop-filter:blur(40px);box-shadow:var(--shadow)}
+.floating-card{position:absolute;left:0;bottom:10%;width:215px;padding:18px}.floating-card span{font-size:10px;color:var(--muted)}.floating-card strong{display:block;font-size:17px;line-height:1.5;margin:12px 0}.floating-card small{color:#918778;font-size:10px}
+.vertical-label{position:absolute;right:-45px;top:42%;transform:rotate(90deg);font-size:8px;letter-spacing:3px;color:#736b5f}
+.hero-scroll{position:absolute;bottom:32px;left:0;display:flex;align-items:center;gap:13px;color:#817768;font-size:8px;letter-spacing:3px}.hero-scroll i{display:block;width:55px;height:1px;background:#817768}
+.section-index{position:absolute;top:0;right:0;font:11px "Playfair Display";color:#756c60;letter-spacing:2px}
+.manifesto{min-height:750px;padding:130px 0% 100px;display:grid;grid-template-columns:.1fr 1fr;gap:60px;align-items:center}
+.manifesto-title h2,.services-head h2,.journey-intro h2,.clinic-copy h2,.booking-copy h2,.faq-title h2{font-size:clamp(50px,5vw,74px);letter-spacing:-2px;margin-top:25px}
+.manifesto-title h2 span{font-family:"Playfair Display";font-style:italic;color:#9f9587}
+.large-copy{font-size:25px;line-height:2;color:#bdb2a2;max-width:1000px}
+.principles{border-top:1px solid var(--line);margin-top:45px}
+.principles article{display:grid;grid-template-columns:80p 200px 1fr;gap:70px;padding:23px 0;border-bottom:1px solid var(--line);align-items:center}.principles b{font:12px "Playfair Display";color:#776e61}.principles strong{font-size:18px}.principles span{color:#8f8577;font-size:12px}
+.services{padding:100px 10px}.services-head{display:flex;justify-content:space-between;align-items:end;gap:40px;padding-left:0%;padding-right:0%}.services-head>p{max-width:310px;color:#8f8577;line-height:1.9;font-size:12px}
+.service-rail{display:grid;grid-template-columns:.9fr .9fr .9fr;gap:30px;margin-top:50px}
+.service-card{min-height:620px;border:1px solid var(--line);background:rgba(238,229,213,.025);position:relative;overflow:hidden;transition:.45s}.service-card:hover{transform:translateY(-8px);border-color:rgba(238,229,213,.35)}
+.service-main{min-height:690px}.service-no{position:absolute;top:20px;right:20px;font:12px "Playfair Display";color:#756d60;z-index:2}
+.service-visual{height:70%;margin:10px;background:linear-gradient(155deg,#332c22,#171512 62%,#514331);display:grid;place-items:center;color:#817667;font-size:50px;letter-spacing:10px;position:relative}.service-visual:after{content:"";position:absolute;inset:18%;border:1px solid rgba(238,229,213,.13);transform:rotate(8deg)}.service-visual.alt{background:linear-gradient(155deg,#26221c,#10100f,#40372b)}.service-visual.third{background:linear-gradient(155deg,#3c3327,#161411,#28231c)}
+.service-content{padding:5px 25px 30px}.service-content>span{font-size:15px;color:#81786b;letter-spacing:1px}.service-content h3{font-size:30px;margin:10px 0}.service-content p{font-size:20px;color:#93897b;line-height:1.9;max-width:300px}.service-content a{display:inline-block;margin-top:18px;font-size:10px;color:var(--cream2);border-bottom:1px solid #6e6659;padding-bottom:5px}
+.journey{padding:150px 0}.journey-intro{width:50%;margin-right:auto;padding-right:4%}.journey-intro p{color:#93897b;line-height:2;margin-top:28px;max-width:370px}
+.journey-map{position:relative;margin-top:100px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}.journey-line{position:absolute;top:23px;right:4%;left:4%;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+.journey-map article{position:relative;padding-top:55px}.journey-map article span{position:absolute;top:0;right:0;width:47px;height:47px;border:1px solid #665f54;border-radius:50%;display:grid;place-items:center;background:var(--ink);font:11px "Playfair Display";z-index:1}.journey-map h3{font-size:20px;margin-bottom:12px}.journey-map p{color:#82796c;font-size:11px;line-height:1.9;max-width:190px}
+.clinic{padding:130px 4% 190px;display:grid;grid-template-columns:1.05fr .95fr;gap:10%;align-items:center}.clinic-visual{position:relative}.image-frame{height:600px;background:linear-gradient(140deg,#332b20,#171411 60%,#413628);border:1px solid var(--line);display:grid;place-items:center;color:#756b5e;font-size:11px;letter-spacing:3px;position:relative}.image-frame:before,.image-frame:after{content:"";position:absolute;border:1px solid rgba(238,229,213,.15)}.image-frame:before{inset:8% 13%}.image-frame:after{inset:16% 22%}
+.caption{position:absolute;bottom:25px;left:-35px;padding:14px 18px;font-size:9px;color:#a99d8b}
+.clinic-copy p{color:#968b7c;line-height:2;margin:30px 0;max-width:520px;font-size:14px}.stats{display:flex;gap:45px;border-top:1px solid var(--line);padding-top:25px}.stats strong{display:block;font:32px "Playfair Display";font-style:italic}.stats span{font-size:9px;color:#776e61}
+.booking{padding:80px 0 160px}.booking-panel{display:grid;grid-template-columns:.8fr 1.2fr;gap:8%;padding:70px}.booking-copy p{color:#948a7b;line-height:2;font-size:12px;margin:25px 0}.contact-mini{display:grid;grid-template-columns:80px 1fr;gap:9px;font-size:9px;border-top:1px solid var(--line);padding-top:18px}.contact-mini span{color:#6e665b;letter-spacing:1px}.booking-form{display:grid;grid-template-columns:1fr 1fr;gap:17px}.booking-form label{display:flex;flex-direction:column;gap:8px;font-size:10px;color:#958b7d}.booking-form input,.booking-form select,.booking-form textarea{background:rgba(0,0,0,.2);border:1px solid rgba(238,229,213,.14);color:var(--cream);padding:13px 14px;outline:none;border-radius:0}.booking-form input:focus,.booking-form select:focus,.booking-form textarea:focus{border-color:#968a79}.booking-form option{background:#191714}.booking-form textarea{resize:vertical}.full{grid-column:1/-1}.consent{display:flex!important;flex-direction:row!important;align-items:center;font-size:9px!important}.consent input{accent-color:var(--cream)}
+.form-note{font-size:10px;color:#b7a993;min-height:18px}
+.faq{padding:100px 0 180px;display:grid;grid-template-columns:.7fr 1.3fr;gap:10%}.faq-list{border-top:1px solid var(--line)}details{border-bottom:1px solid var(--line);padding:22px 0}summary{list-style:none;cursor:pointer;font-size:15px;display:flex;justify-content:space-between;gap:20px}summary::-webkit-details-marker{display:none}summary span{color:#8c8273}details p{color:#8c8274;font-size:11px;line-height:2;margin-top:15px;max-width:650px}
+.footer{border-top:1px solid var(--line);padding:70px 7vw;display:flex;justify-content:space-between;gap:50px}.footer h2{font-size:42px;margin-top:18px}.footer-links{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;color:#867c6e;font-size:10px}.footer-links span{width:100%}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .9s ease,transform .9s ease}.reveal.is-visible{opacity:1;transform:none}.delay-1{transition-delay:.16s}
+@media(max-width:900px){.nav{display:none;position:absolute;top:92px;right:0;left:0;padding:25px;background:rgba(17,16,14,.97);flex-direction:column;align-items:flex-start}.nav.open{display:flex}.menu-toggle{display:block}.hero{grid-template-columns:1fr;padding-top:130px}.hero-stage{height:560px}.manifesto{grid-template-columns:1fr;gap:60px}.service-rail{grid-template-columns:1fr 1fr}.service-main{grid-row:span 2}.journey-intro{width:75%}.journey-map{grid-template-columns:1fr 1fr;gap:60px 30px}.journey-line{display:none}.clinic{grid-template-columns:1fr}.booking-panel{grid-template-columns:1fr;padding:45px 35px}.faq{grid-template-columns:1fr;gap:55px}}
+@media(max-width:620px){.section-shell{width:min(100% - 30px,1260px)}.site-header{padding:0 20px}.hero{padding-top:120px}.hero-stage{min-height:430px;height:55vh}.portrait-placeholder{inset:5% 8% 3% 12%}.floating-card{width:175px;left:0}.vertical-label{right:-55px;font-size:7px}.hero-scroll{display:none}h1{font-size:50px;letter-spacing:-2px}.manifesto,.services,.journey,.clinic,.booking,.faq{padding-top:100px;padding-bottom:110px}.manifesto{padding-left:8%;padding-right:8%}.large-copy{font-size:17px}.principles article{grid-template-columns:35px 80px 1fr}.services-head{padding:0 3%;display:block}.services-head>p{margin-top:25px}.service-rail{grid-template-columns:1fr;margin-top:45px}.service-main{grid-row:auto}.service-card,.service-main{min-height:560px}.journey-intro{width:100%}.journey-map{grid-template-columns:1fr}.clinic{padding-left:4%;padding-right:4%}.image-frame{height:460px}.caption{left:10px}.booking-panel{padding:35px 22px}.booking-form{grid-template-columns:1fr}.full{grid-column:auto}.faq{padding-left:4%;padding-right:4%}.footer{padding:55px 20px;display:block}.footer-links{margin-top:45px}}
+
+/* --- Large clinic photography backgrounds --- */
+.hero-image-top .portrait-placeholder{
+  background:
+    linear-gradient(180deg, rgba(17,16,14,.08), rgba(17,16,14,.66)),
+    url("https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1800&q=85") center/cover no-repeat;
+}
+.hero-image-top .portrait-placeholder:before{background:linear-gradient(145deg,rgba(238,229,213,.08),rgba(0,0,0,.03));}
+
+.expertise{padding:130px 6% 170px;display:grid;grid-template-columns:1.05fr .95fr;gap:10%;align-items:center}
+.expertise-image{position:relative}
+.expertise-image-inner{
+  height:1000px;border:1px solid var(--line);position:relative;overflow:hidden;
+  display:grid;place-items:center;color:#817667;font-size:10px;letter-spacing:3px;
+  background:
+    linear-gradient(180deg,rgba(17,16,14,.08),rgba(17,16,14,.72)),
+    url("https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1800&q=85") center/cover no-repeat;
+}
+.expertise-image-inner:after{content:"";position:absolute;inset:8%;border:1px solid rgba(238,229,213,.17)}
+.expertise-copy p{color:#968b7c;line-height:2;margin:30px 0;max-width:520px;font-size:14px}
+.expertise-points{border-top:1px solid var(--line)}
+.expertise-points div{display:flex;align-items:center;gap:24px;padding:17px 0;border-bottom:1px solid var(--line)}
+.expertise-points b{font:12px "Playfair Display";color:#776e61}.expertise-points span{font-size:13px;color:#b5aa9a}
+
+.before-after{padding:90px 0 170px}
+.ba-heading{display:grid;grid-template-columns:.8fr 1fr;align-items:end;gap:70px;padding:0 4%}
+.ba-heading h2{font-size:clamp(42px,5vw,70px);margin-top:22px}
+.ba-heading p{color:#8e8476;font-size:12px;line-height:2;max-width:330px}
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:65px}
+.ba-card{border:1px solid var(--line);background:rgba(238,229,213,.035);padding:14px}
+.ba-images{height:480px;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden}
+.ba-placeholder{display:grid;place-items:center;background:linear-gradient(145deg,#3a3024,#181613 65%);color:#857a6b;font-size:10px;letter-spacing:2px}
+.ba-placeholder:before{content:"";width:62%;height:76%;border:1px solid rgba(238,229,213,.15);transform:rotate(-6deg)}
+.ba-placeholder.after{background:linear-gradient(145deg,#2b261f,#4a3d2d 60%,#171512)}
+.ba-placeholder.second{background:linear-gradient(145deg,#28231e,#4b3e30)}
+.ba-placeholder.second-after{background:linear-gradient(145deg,#403427,#171512 70%)}
+.ba-divider{position:absolute;top:0;bottom:0;left:50%;width:1px;background:rgba(238,229,213,.55);transform:translateX(-50%)}
+.ba-divider i{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border:1px solid rgba(238,229,213,.7);border-radius:50%;background:#191714}
+.ba-divider i:after{content:"↔";position:absolute;inset:0;display:grid;place-items:center;color:var(--cream);font-size:14px}
+.ba-meta{display:flex;justify-content:space-between;gap:15px;padding:20px 8px 10px}
+.ba-meta strong{font-size:13px;font-weight:500}.ba-meta span{font-size:9px;color:#7f7669}
+
+@media(max-width:900px){
+  .expertise{grid-template-columns:1fr;gap:55px}
+  .ba-heading{grid-template-columns:1fr;gap:25px}
+  .ba-grid{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .expertise{padding-left:4%;padding-right:4%}
+  .expertise-image-inner{height:430px}
+  .before-after{padding-left:0;padding-right:0}
+  .ba-heading{padding:0 4%}
+  .ba-images{height:350px}
+}
+
+/* Typography */
+body{font-family:"Vazirmatn",Tahoma,Arial,sans-serif}
+h1,h2,h3,.brand strong,.button,.nav,.hero-caption strong,.contact-details-grid strong{font-family:"Estedad","Vazirmatn",Tahoma,sans-serif}
+
+/* Single-column Hero */
+.hero{display:block;min-height:100vh;padding-top:118px;position:relative}
+.hero-visual-full{height:calc(100vh - 145px);min-height:650px;position:relative;overflow:hidden;border:1px solid rgba(238,229,213,.18);box-shadow:0 35px 90px rgba(0,0,0,.35)}
+.hero-image-backdrop{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,9,8,.10) 5%,rgba(10,9,8,.48) 52%,rgba(10,9,8,.92) 100%),url("https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=2200&q=90") center/cover no-repeat;transform:scale(1.03);animation:heroDrift 16s ease-in-out infinite alternate}
+.hero-overlay{position:absolute;inset:0;background:radial-gradient(circle at 70% 25%,rgba(238,229,213,.14),transparent 28%),linear-gradient(90deg,rgba(17,16,14,.80),transparent 64%)}
+.hero-content{position:absolute;z-index:2;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;max-width:820px;padding:8%}
+.hero-content h1{font-size:clamp(48px,6.8vw,100px);line-height:1.1;margin:22px 0;letter-spacing:-2px;font-family:"Estedad","Vazirmatn"}
+.hero-content h1 span{color:var(--cream2)}
+.hero-content .hero-lead{max-width:590px;color:#d0c5b5}
+.hero-caption{position:absolute;z-index:3;left:30px;bottom:30px;padding:14px 18px;display:flex;flex-direction:column;gap:4px}
+.hero-caption span{font-size:8px;letter-spacing:2px;color:#857b6d}
+@keyframes heroDrift{from{transform:scale(1.03) translate3d(0,0,0)}to{transform:scale(1.08) translate3d(-1.5%,-1%,0)}}
+
+/* Contact */
+.contact-strip{padding:30px 0 150px}
+.contact-strip-inner{padding:55px 60px;display:grid;grid-template-columns:.7fr 1.3fr;gap:60px;align-items:center}
+.contact-details-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--line)}
+.contact-details-grid a,.contact-details-grid>div{padding:20px 0;border-bottom:1px solid var(--line)}
+.contact-details-grid small{display:block;color:#726a5e;font-size:9px;letter-spacing:1.5px;margin-bottom:8px}
+.contact-details-grid strong{font-size:14px;font-weight:500;color:#d4c8b7}
+@media(max-width:900px){.hero-visual-full{min-height:600px;height:75vh}.hero-content{padding:7%}.contact-strip-inner{grid-template-columns:1fr;padding:40px 28px}}
+@media(max-width:620px){.hero{padding-top:104px}.hero-visual-full{min-height:620px;height:78vh}.hero-content{padding:28px 22px 80px}.hero-content h1{font-size:47px}.hero-caption{left:15px;bottom:15px}.contact-details-grid{grid-template-columns:1fr}.contact-strip-inner{padding:34px 20px}}
+
+/* Advanced Nastaliq headings — bundled locally so the font actually loads offline */
+@font-face{font-family:"Nastaliq Advanced";src:url("fonts/nastaliq-advanced.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Nastaliq Advanced";src:url("fonts/nastaliq-advanced-bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
+
+/* All Persian headings use estedad with an elegant white/gold treatment */
+h1,h2,h3,.footer h2,.hero-content h1,.manifesto-title h2,.services-head h2,.journey-intro h2,.clinic-copy h2,.booking-copy h2,.faq-title h2,.ba-heading h2,.service-content h3,.journey-map h3,.expertise-copy h2{font-family:"Nastaliq Advanced",serif !important;font-weight:700;letter-spacing:0 !important;line-height:1.7 !important;color:#fff !important;text-shadow:0 2px 18px rgba(0,0,0,.35)}
+
+/* Gold emphasis inside headings */
+h1 span,h1 em,h2 span,h2 em,h3 span,h3 em,.hero-content h1 span,.manifesto-title h2 span{font-family:"Nastaliq Advanced",serif !important;color:#d4af37 !important;font-style:normal}
+
+/* Keep the English eyebrow/labels readable and unchanged */
+.eyebrow,.section-index,.hero-caption span,.nav,.button,.contact-details-grid strong{font-family:"Vazirmatn",Tahoma,Arial,sans-serif}
+
+
+/* === Golpour Clinic: full-width header + hero image === */
+.site-header{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  width:100%;
+  z-index:50;
+  background:linear-gradient(180deg,rgba(10,9,8,.62),rgba(10,9,8,0));
+  border-bottom:1px solid rgba(238,229,213,.08);
+}
+.hero{
+  display:block;
+  min-height:auto;
+  padding-top:0;
+}
+.hero-visual-full{
+  width:100vw;
+  height:min(1000px,820vh);
+  min-height:560px;
+  position:relative;
+  overflow:hidden;
+  margin-right:calc(50% - 50vw);
+  margin-left:calc(50% - 50vw);
+  border:0;
+  box-shadow:none;
+}
+.hero-image-backdrop{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(180deg,rgba(10,9,8,.16) 0%,rgba(10,9,8,.20) 80%,rgba(10,9,8,.82) 100%),
+    url(images/hero.jpg.jpg) center top/cover no-repeat;
+  transform:scale(1.03);
+  animation:heroDrift 16s ease-in-out infinite alternate;
+}
+.hero-overlay{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 72% 24%,rgba(238,229,213,.12),transparent 28%),
+    linear-gradient(90deg,rgba(17,16,14,.38),transparent 65%);
+}
+.hero-intro{
+  width:92%;
+  margin:0 auto;
+  padding:90px 0 115px;
+  text-align:center;
+}
+.hero-intro .hero-lead{
+  margin-left:auto;
+  margin-right:auto;
+}
+.hero-intro .hero-actions{
+  justify-content:center;
+}
+.hero-caption{
+  position:absolute;
+  z-index:3;
+  left:6%;
+  bottom:42px;
+  padding:14px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.hero-caption strong{
+  color: #857b6d;
+  font-size:15px;
+  letter-spacing:2px;
+}
+.hero-scroll{
+  position:absolute;
+  z-index:4;
+  right:6%;
+  bottom:38px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:#d0c5b5;
+  font-size:9px;
+  letter-spacing:3px;
+}
+.hero-scroll i{
+  display:block;
+  width:48px;
+  height:1px;
+  background:#d4af37;
+}
+@media(max-width:900px){
+  .hero-visual-full{height:72vh;min-height:520px}
+  .hero-intro{padding:72px 0 90px}
+}
+@media(max-width:620px){
+  .hero-visual-full{height:68vh;min-height:500px}
+  .hero-intro{width:90%;padding:58px 0 75px}
+  .hero-caption{left:20px;bottom:22px}
+  .hero-scroll{right:20px;bottom:22px}
+}
+h2,
+h3,
+h4,
+h5,
+h6,
+.footer h2,
+.manifesto-title h2,
+.services-head h2,
+.journey-intro h2,
+.clinic-copy h2,
+.booking-copy h2,
+.faq-title h2,
+.ba-heading h2,
+.service-content h3,
+.journey-map h3,
+.expertise-copy h2 {
+    font-family: "Estedad", "Vazirmatn", Tahoma, sans-serif !important;
+}
+
+/* شعار اصلی Hero با نستعلیق باقی بماند */
+.hero-content h1 {
+    font-family: "Nastaliq Advanced", serif !important;
+}
+.gold-calligraphy{
+  color:#d4af37;
+  font-family:"IranNastaliq","Nastaliq",serif;
+}
+.about-image {
+    width: 100%;
+    max-width: 520px;
+    height: 580px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.about-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* =========================================================
+   FINAL RESPONSIVE POLISH — GOLPOUR CLINIC
+   ========================================================= */
+:root{
+  --content-max: 1440px;
+  --gutter: clamp(18px, 3vw, 52px);
+  --cream:#eee5d5;
+  --gold:#d4af37;
+}
+
+html{scroll-behavior:smooth;}
+body{overflow-x:hidden;}
+
+/* Wider overall content without letting it feel stretched on small screens */
+.section-shell{
+  width:min(var(--content-max),calc(100% - (var(--gutter) * 2)));
+  margin-inline:auto;
+}
+
+/* Transparent, top-aligned horizontal desktop header */
+.site-header{
+  position:absolute;
+  inset:0 0 auto 0;
+  width:100%;
+  height:88px;
+  padding:0 clamp(18px,4vw,64px);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:34px;
+  background:transparent !important;
+  border-bottom:0;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+.brand{flex:0 0 auto;min-width:max-content;}
+.brand-mark{width:56px;height:56px;}
+.brand strong{font-size:clamp(24px,2vw,31px);}
+.brand small{font-size:11px;letter-spacing:5px;}
+.nav{
+  margin-inline-start:auto;
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:nowrap;
+  gap:clamp(12px,2vw,30px);
+  direction:rtl;
+  font-size:clamp(14px,1.3vw,18px);
+  white-space:nowrap;
+}
+.nav a{display:inline-flex;align-items:center;height:44px;}
+.nav-cta{padding:9px 15px !important;height:auto !important;}
+.menu-toggle{display:none;}
+
+/* Full viewport hero: keep the complete source image height visible */
+.hero{
+  display:block;
+  min-height:0;
+  padding-top:0;
+}
+.hero-visual-full{
+  width:100vw;
+  height:100dvh;
+  min-height:560px;
+  margin-inline:calc(50% - 50vw);
+  position:relative;
+  overflow:hidden;
+  border:0;
+  box-shadow:none;
+}
+@supports not (height:100dvh){
+  .hero-visual-full{height:100vh;}
+}
+.hero-image-backdrop{
+  inset:0;
+  background:
+    linear-gradient(180deg,rgba(10,9,8,.06) 0%,rgba(10,9,8,.10) 55%,rgba(10,9,8,.72) 100%),
+    url("images/hero.jpg.jpg") center top/cover no-repeat;
+  transform:none;
+  animation:heroDrift 18s ease-in-out infinite alternate;
+}
+.hero-overlay{
+  background:
+    radial-gradient(circle at 74% 24%,rgba(238,229,213,.10),transparent 29%),
+    linear-gradient(90deg,rgba(17,16,14,.25),transparent 68%);
+}
+.hero-caption{left:clamp(18px,4vw,64px);bottom:clamp(22px,4vh,46px);}
+.hero-scroll{right:clamp(18px,4vw,64px);bottom:clamp(22px,4vh,46px);}
+.hero-intro{
+  width:min(1180px,calc(100% - 40px));
+  margin-inline:auto;
+  padding:clamp(80px,9vw,140px) 0 clamp(90px,10vw,155px);
+  text-align:center;
+}
+.hero-intro .hero-lead{max-width:900px;}
+
+/* More breathing room + scalable paragraphs */
+.hero-lead,
+.large-copy,
+.manifesto-body p,
+.expertise-copy>p,
+.clinic-copy p,
+.booking-copy p,
+.ba-heading>p,
+.journey-intro>p,
+.faq-list p,
+.service-content p,
+.contact-details-grid strong{
+  font-size:clamp(15px,1.25vw,21px);
+  line-height:2.05;
+}
+.large-copy{max-width:1100px;}
+.manifesto-body p{margin-top:28px;}
+.expertise-copy>p{margin-top:28px;max-width:850px;}
+.service-content p{max-width:430px;}
+
+.manifesto,.expertise,.before-after,.journey,.clinic,.booking,.faq,.contact-strip{padding-left:0;padding-right:0;}
+.manifesto{padding-top:clamp(105px,9vw,145px);padding-bottom:clamp(90px,8vw,135px);}
+.expertise{padding-top:clamp(100px,9vw,145px);padding-bottom:clamp(100px,9vw,145px);}
+.journey{padding-top:clamp(105px,9vw,150px);padding-bottom:clamp(110px,10vw,165px);}
+.clinic{padding-top:clamp(105px,8vw,140px);padding-bottom:clamp(120px,10vw,185px);}
+.booking{padding-bottom:clamp(110px,10vw,165px);}
+.faq{padding-bottom:clamp(120px,10vw,180px);}
+
+/* Before / After — Swiper-style horizontal slider */
+.ba-slider-wrap{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+  padding:0 56px 42px;
+}
+.ba-swiper{
+  width:100%;
+  overflow:hidden;
+}
+.ba-swiper-wrapper{
+  display:flex;
+  gap:0;
+  direction:ltr;
+  will-change:transform;
+  transition:transform .65s cubic-bezier(.22,.61,.36,1);
+}
+.ba-swiper-slide{
+  flex:0 0 100%;
+  min-width:0;
+  direction:rtl;
+}
+.ba-card{height:100%;}
+.ba-nav{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:42px;
+  height:42px;
+  border:1px solid rgba(238,229,213,.3);
+  border-radius:50%;
+  background:rgba(17,16,14,.65);
+  color:var(--cream);
+  z-index:3;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  font-size:17px;
+  transition:.3s ease;
+}
+.ba-nav:hover{background:rgba(212,175,55,.13);border-color:rgba(212,175,55,.65);color:#d4af37;}
+.ba-prev{left:6px;}
+.ba-next{right:6px;}
+.ba-pagination{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  transform:translateX(-50%);
+  display:flex;
+  direction:ltr;
+  gap:8px;
+}
+.ba-bullet{width:6px;height:6px;border-radius:50%;background:#756d60;border:0;padding:0;opacity:.7;transition:.3s;cursor:pointer;}
+.ba-bullet.is-active{width:24px;border-radius:9px;background:#d4af37;opacity:1;}
+
+/* Make the actual BA imagery feel like one deliberate slide */
+.ba-images{height:min(58vw,610px);min-height:350px;}
+.ba-meta{padding-top:22px;}
+
+@media(min-width:900px){
+  .ba-swiper-slide{flex-basis:50%;padding-inline:10px;}
+  .ba-swiper-wrapper{margin-inline:-10px;}
+}
+@media(min-width:1200px){
+  .ba-swiper-slide{flex-basis:50%;}
+}
+
+/* Tablet */
+@media(max-width:1024px){
+  .site-header{height:82px;padding-inline:24px;gap:18px;}
+  .nav{gap:14px;font-size:14px;}
+  .nav-cta{padding:8px 12px !important;}
+  .section-shell{width:min(100% - 34px,var(--content-max));}
+  .hero-intro{width:min(920px,calc(100% - 34px));}
+  .ba-slider-wrap{padding-inline:48px;}
+  .large-copy,.hero-lead,.expertise-copy>p,.clinic-copy p,.booking-copy p,.ba-heading>p{font-size:clamp(15px,1.7vw,19px);}
+}
+
+/* Mobile-first behaviour — compact and legible */
+@media(max-width:820px){
+  .hero-image-backdrop{background-position:60% top;}
+  .site-header{height:74px;padding-inline:16px;}
+  .brand-mark{width:46px;height:46px;}
+  .brand strong{font-size:22px;}
+  .brand small{font-size:9px;letter-spacing:3px;}
+  .nav{
+    position:absolute;
+    top:74px;
+    right:16px;
+    left:16px;
+    display:none;
+    flex-direction:column;
+    align-items:stretch;
+    gap:4px;
+    padding:10px;
+    background:rgba(17,16,14,.92);
+    border:1px solid rgba(238,229,213,.14);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+  }
+  .nav.open{display:flex;}
+  .nav a{height:auto;padding:10px 12px;justify-content:center;}
+  .nav-cta{justify-content:center !important;margin-top:4px;}
+  .menu-toggle{display:block;flex:0 0 42px;}
+  .hero-visual-full{height:100dvh;min-height:560px;}
+  .hero-caption{display:none;}
+  .hero-scroll{right:18px;left:18px;justify-content:center;bottom:20px;}
+  .hero-intro{padding:64px 0 84px;}
+  .hero-intro h1{font-size:clamp(47px,12vw,70px) !important;line-height:1.55 !important;}
+  .hero-lead{font-size:16px;line-height:2.15;}
+  .hero-actions{gap:12px;margin-top:28px;}
+  .hero-actions .button{width:100%;}
+  .manifesto{grid-template-columns:1fr;gap:28px;}
+  .manifesto-title h2,.services-head h2,.journey-intro h2,.clinic-copy h2,.booking-copy h2,.faq-title h2,.ba-heading h2,.expertise-copy h2{font-size:clamp(42px,10vw,62px) !important;}
+  .manifesto-body p,.large-copy,.expertise-copy>p,.clinic-copy p,.booking-copy p,.ba-heading>p,.journey-intro>p,.faq-list p,.service-content p{font-size:clamp(15px,4.3vw,18px);line-height:2.15;}
+  .ba-slider-wrap{padding-inline:42px;padding-bottom:36px;}
+  .ba-nav{width:36px;height:36px;font-size:15px;}
+  .ba-prev{left:2px;}.ba-next{right:2px;}
+  .ba-images{height:430px;min-height:0;}
+}
+
+@media(max-width:480px){
+  .hero-image-backdrop{background-position:62% top;}
+  .section-shell{width:calc(100% - 24px);}
+  .site-header{padding-inline:12px;}
+  .hero-visual-full{min-height:540px;}
+  .hero-intro{width:calc(100% - 24px);}
+  .ba-slider-wrap{padding-inline:38px;}
+  .ba-images{height:390px;}
+  .ba-meta{gap:10px;}
+  .ba-meta strong{font-size:12px;}
+  .ba-meta span{font-size:10px;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  .hero-image-backdrop{animation:none;}
+  .ba-swiper-wrapper{transition:none;}
+}
+
+/* === FINAL FIXES: ABOUT / IMAGES / JOURNEY / BA CONTROLS === */
+.manifesto{
+  position:relative;
+  min-height:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(36px,6vw,90px);
+  align-items:center;
+}
+.manifesto-copy{min-width:0;}
+.manifesto-copy h2{margin-bottom:18px;}
+.manifesto-copy h3{margin-bottom:12px;}
+.doctor-en{color:#9b9183;font-size:clamp(12px,1vw,16px);line-height:1.9;margin-top:4px;}
+.manifesto-body{margin-top:28px;}
+.manifesto-body .large-copy{max-width:none;}
+.about-image{
+  width:100%;
+  height:clamp(520px,42vw,720px);
+  max-width:none;
+  margin:0;
+  overflow:hidden;
+  border:1px solid var(--line);
+  position:relative;
+}
+.about-image img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  object-position:center;
+}
+
+/* All service/expertise images fill their visual frame */
+.service-visual img,
+.expertise-image-inner img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  object-position:center;
+  position:absolute;
+  inset:0;
+}
+.service-visual{overflow:hidden;}
+.expertise-image-inner{height:clamp(520px,47vw,680px);overflow:hidden;}
+.expertise-image-inner > span{display:block;width:100%;height:100%;position:relative;z-index:1;}
+.expertise-image-inner:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(17,16,14,.03),rgba(17,16,14,.24));z-index:2;pointer-events:none;}
+.expertise-image-inner:after{z-index:3;pointer-events:none;}
+
+/* Journey heading and paragraph centered */
+.journey-intro{
+  width:min(900px,100%);
+  margin-inline:auto;
+  padding:0;
+  text-align:center;
+}
+.journey-intro p{margin:28px auto 0;max-width:700px;}
+
+/* Before / After controls always clickable and visually above the track */
+.ba-slider-wrap{z-index:2;}
+.ba-nav{pointer-events:auto;opacity:1 !important;visibility:visible !important;}
+.ba-swiper{position:relative;z-index:1;}
+.ba-nav:disabled{opacity:.38 !important;cursor:not-allowed;}
+
+@media (min-width:821px){
+  .manifesto{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+}
+@media (max-width:820px){
+  .manifesto{grid-template-columns:1fr;gap:38px;}
+  .about-image{height:min(115vw,620px);}
+  .expertise-image-inner{height:min(110vw,620px);}
+  .journey-intro{width:100%;}
+}
+@media (max-width:480px){
+  .about-image{height:112vw;min-height:380px;}
+  .expertise-image-inner{height:105vw;min-height:360px;}
+}
+/* --- Logo size fix --- */
+.brand-mark{
+  width:56px;
+  height:56px;
+  flex:0 0 56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.brand-mark img{
+  width:100%;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  display:block;
+}
+@media(max-width:820px){
+  .brand-mark{
+    width:46px;
+    height:46px;
+    flex-basis:46px;
+  }
+
+  .brand-mark img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+  }
+}/* =================================
+   BEFORE / AFTER - FINAL FIX
+================================= */
+
+.ba-images{
+  position:relative;
+  width:100%;
+  height:560px;
+  overflow:hidden;
+  border-radius:18px;
+  background:#11100e;
+}
+
+/* هر دو تصویر دقیقاً داخل یک کادر */
+.ba-images > .images,
+.ba-images > .ba-placeholder{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+/* خود عکس‌ها */
+.ba-images img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  object-position:center;
+}
+
+/* لایه AFTER */
+.ba-images > .after{
+  width:50%;
+  right:0;
+  left:auto;
+}
+
+/* نوشته BEFORE / AFTER */
+.ba-images > div > span{
+  position:absolute;
+  top:20px;
+  right:20px;
+  z-index:5;
+  padding:7px 12px;
+  background:rgba(17,16,14,.72);
+  color:var(--cream);
+  font-size:11px;
+  letter-spacing:2px;
+}
+
+/* خط وسط */
+.ba-divider{
+  position:absolute !important;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:2px !important;
+  height:100% !important;
+  transform:translateX(-50%);
+  background:var(--cream);
+  z-index:10;
+  pointer-events:none;
+}
+
+.ba-divider i{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:42px;
+  height:42px;
+  transform:translate(-50%,-50%);
+  border:1px solid var(--cream);
+  border-radius:50%;
+  background:var(--ink);
+}
+
+/* موبایل */
+@media(max-width:820px){
+
+  .ba-images{
+    height:440px;
+    border-radius:14px;
+  }
+
+  .ba-images img{
+    object-position:center;
+  }
+
+}
+
+/* موبایل خیلی کوچک */
+@media(max-width:480px){
+
+  .ba-images{
+    height:360px;
+  }
+
+  .ba-images > div > span{
+    top:12px;
+    right:12px;
+    font-size:9px;
+    padding:5px 8px;
+  }
+
+  .ba-divider i{
+    width:34px;
+    height:34px;
+  }
+
+}/* کوچک‌تر کردن تصویر کلینیک */
+.clinic-visual .image-frame {
+  width: 65%;
+  max-width: 550px;
+  height: 500px;
+  margin: 0 auto;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clinic-visual .image-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: none !important;
+}
+}
+
+@media (max-width: 820px) {
+  .clinic-visual .image-frame {
+    height: 420px;
+  }
+}
+
+@media (max-width: 480px) {
+  .clinic-visual .image-frame {
+    height: 320px;
+  }
+}.clinic-visual .image-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.30);
+}/* تصویر کلینیک - موبایل */
+@media (max-width: 820px) {
+  .clinic-visual .image-frame {
+    width: 100%;
+    height: 460px;
+    overflow: hidden;
+  }
+
+  .clinic-visual .image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.10);
+  }
+}
+
+@media (max-width: 480px) {
+  .clinic-visual .image-frame {
+    width: 100%;
+    height: 380px;
+  }
+
+  .clinic-visual .image-frame img {
+    transform: scale(1.20);
+  }
+}.brand-mark {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: block;
+}
+
+.brand-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+/* =========================================
+   USER REQUEST — TYPOGRAPHY & RESULTS FIX
+   Keep all other design/content unchanged.
+========================================= */
+
+/* Persian headings: Vazirmatn + gray, replacing Nastaliq */
+h1,
+h2,
+h3,
+.footer h2,
+.hero-content h1,
+.manifesto-title h2,
+.services-head h2,
+.journey-intro h2,
+.clinic-copy h2,
+.booking-copy h2,
+.faq-title h2,
+.ba-heading h2,
+.service-content h3,
+.journey-map h3,
+.expertise-copy h2{
+  font-family:"Vazirmatn",Tahoma,Arial,sans-serif !important;
+  color:#a9a9a9 !important;
+  text-shadow:none !important;
+  font-style:normal !important;
+  font-weight:600 !important;
+}
+
+/* Gold/italic heading emphasis also becomes gray and uses Vazirmatn */
+h1 span,
+h1 em,
+h2 span,
+h2 em,
+h3 span,
+h3 em,
+.hero-content h1 span,
+.manifesto-title h2 span{
+  font-family:"Vazirmatn",Tahoma,Arial,sans-serif !important;
+  color:#a9a9a9 !important;
+  font-style:normal !important;
+}
+
+/* Slightly smaller headings without changing layout/content */
+.manifesto-title h2,
+.services-head h2,
+.journey-intro h2,
+.clinic-copy h2,
+.booking-copy h2,
+.faq-title h2,
+.ba-heading h2,
+.expertise-copy h2{
+  font-size:clamp(38px,4.25vw,62px) !important;
+  line-height:1.35 !important;
+}
+
+.service-content h3,
+.journey-map h3{
+  font-size:clamp(17px,1.7vw,25px) !important;
+  line-height:1.5 !important;
+}
+
+.hero-content h1{
+  font-size:clamp(42px,5.8vw,88px) !important;
+  line-height:1.2 !important;
+}
+
+/* Booking contact information: slightly larger */
+.booking-copy .contact-mini{
+  font-size:12px !important;
+  line-height:1.9;
+}
+.booking-copy .contact-mini a,
+.booking-copy .contact-mini strong{
+  font-size:13px !important;
+}
+.booking-copy .contact-mini span{
+  font-size:10px !important;
+}
+
+/* Before / After result title and text: larger */
+.ba-meta strong{
+  font-size:17px !important;
+  line-height:1.6;
+}
+.ba-meta span{
+  font-size:13px !important;
+  line-height:1.6;
+}
+
+/* Before / After images: show the full image inside each half */
+.ba-images img{
+  object-fit:contain !important;
+  object-position:center center !important;
+  background:#11100e;
+}
+.ba-placeholder:before{
+  display:none !important;
+}
+
+@media(max-width:820px){
+  .manifesto-title h2,
+  .services-head h2,
+  .journey-intro h2,
+  .clinic-copy h2,
+  .booking-copy h2,
+  .faq-title h2,
+  .ba-heading h2,
+  .expertise-copy h2{
+    font-size:clamp(34px,8.5vw,52px) !important;
+  }
+
+  .hero-content h1{
+    font-size:clamp(39px,11vw,58px) !important;
+  }
+
+  .ba-meta strong{font-size:16px !important;}
+  .ba-meta span{font-size:12px !important;}
+
+  .booking-copy .contact-mini{
+    font-size:12px !important;
+  }
+  .booking-copy .contact-mini a,
+  .booking-copy .contact-mini strong{
+    font-size:13px !important;
+  }
+}
+
+@media(max-width:480px){
+  .manifesto-title h2,
+  .services-head h2,
+  .journey-intro h2,
+  .clinic-copy h2,
+  .booking-copy h2,
+  .faq-title h2,
+  .ba-heading h2,
+  .expertise-copy h2{
+    font-size:clamp(31px,8vw,46px) !important;
+  }
+
+  .hero-content h1{
+    font-size:clamp(36px,10vw,52px) !important;
+  }
+
+  .ba-meta strong{font-size:15px !important;}
+  .ba-meta span{font-size:11px !important;}
+}
+/* ===== FINAL HEADING SIZE ===== */
+
+h1,
+h2,
+h3{
+  font-family:"Vazirmatn",Tahoma,Arial,sans-serif !important;
+  color:#a9a9a9 !important;
+  text-shadow:none !important;
+}
+
+/* تیتر اصلی Hero */
+.hero-content h1{
+  font-size:clamp(38px,5vw,76px) !important;
+  line-height:1.2 !important;
+}
+
+/* تیتر سکشن‌ها */
+.manifesto-title h2,
+.services-head h2,
+.journey-intro h2,
+.clinic-copy h2,
+.booking-copy h2,
+.faq-title h2,
+.ba-heading h2,
+.expertise-copy h2{
+  font-size:clamp(32px,3.6vw,52px) !important;
+  line-height:1.35 !important;
+}
+
+/* تیتر کارت‌ها */
+.service-content h3,
+.journey-map h3{
+  font-size:clamp(15px,1.5vw,22px) !important;
+  line-height:1.5 !important;
+}
+
+/* موبایل */
+@media(max-width:820px){
+
+  .hero-content h1{
+    font-size:clamp(36px,10vw,54px) !important;
+  }
+
+  .manifesto-title h2,
+  .services-head h2,
+  .journey-intro h2,
+  .clinic-copy h2,
+  .booking-copy h2,
+  .faq-title h2,
+  .ba-heading h2,
+  .expertise-copy h2{
+    font-size:clamp(30px,7.5vw,46px) !important;
+  }
+
+  .service-content h3,
+  .journey-map h3{
+    font-size:18px !important;
+  }
+}
+
+/* موبایل خیلی کوچک */
+@media(max-width:480px){
+
+  .hero-content h1{
+    font-size:clamp(34px,9.5vw,50px) !important;
+  }
+
+  .manifesto-title h2,
+  .services-head h2,
+  .journey-intro h2,
+  .clinic-copy h2,
+  .booking-copy h2,
+  .faq-title h2,
+  .ba-heading h2,
+  .expertise-copy h2{
+    font-size:clamp(28px,7vw,42px) !important;
+  }
+}.hero-copy.hero-intro h1 {
+  font-size: 45px !important;
+  line-height: 1.3 !important;
+}.ba-heading {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.ba-heading h2,
+.ba-heading p {
+  width: 100% !important;
+  max-width: 1100px !important;
+}/* ===== نمایش کامل تصاویر قبل و بعد ===== */
+
+.ba-images {
+  width: 100% !important;
+  height: auto !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  overflow: hidden !important;
+}
+
+.ba-images .images,
+.ba-images .ba-placeholder {
+  position: relative !important;
+  width: 100% !important;
+  height: 520px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #11100e !important;
+}
+
+.ba-images .images img,
+.ba-images .ba-placeholder img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  display: block !important;
+}@media (max-width: 820px) {
+  .ba-images .images,
+  .ba-images .ba-placeholder {
+    height: 380px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .ba-images .images,
+  .ba-images .ba-placeholder {
+    height: 300px !important;
+  }
+}/* نمایش اعداد فارسی */
+body {
+  font-variant-numeric: normal;
+}
+.booking-copy .contact-mini a,
+.booking-copy .contact-mini strong {
+  font-size: 16px !important;
+  line-height: 2 !important;
+}
