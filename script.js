@@ -42,13 +42,101 @@ toggle.addEventListener("click",()=>{
 });
 document.querySelectorAll(".nav a").forEach(a=>a.addEventListener("click",()=>nav.classList.remove("open")));
 
-const form=document.getElementById("bookingForm");
-const message=document.getElementById("formMessage");
-form.addEventListener("submit",e=>{
-  e.preventDefault();
-  message.textContent="درخواست شما در حالت نمایشی ثبت شد. اتصال فرم به ایمیل، واتساپ یا CRM کلینیک را می‌توان در مرحله بعد انجام داد.";
-  form.reset();
-});
+const form = document.getElementById("bookingForm");
+const message = document.getElementById("formMessage");
+
+if (form && message) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // بررسی اعتبار فرم
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    // گرفتن آدرس Formspree از action فرم
+    const endpoint = form.getAttribute("action");
+
+    // دکمه ارسال
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    // جلوگیری از ارسال در صورتی که Form ID هنوز وارد نشده
+    if (!endpoint || endpoint.includes("REPLACE_WITH_YOUR_FORM_ID")) {
+      message.textContent =
+        "اتصال Formspree هنوز کامل نشده است؛ Form ID را در action فرم وارد کنید.";
+
+      message.style.color = "#d6a86a";
+      return;
+    }
+
+    // ذخیره محتوای اصلی دکمه
+    const originalButtonHTML = submitButton.innerHTML;
+
+    // حالت Loading
+    submitButton.disabled = true;
+    submitButton.style.opacity = "0.65";
+
+    message.textContent = "در حال ارسال درخواست...";
+    message.style.color = "";
+
+    try {
+
+      // ارسال اطلاعات فرم به Formspree
+      const response = await fetch(endpoint, {
+        method: "POST",
+        body: new FormData(form),
+        headers: {
+          Accept: "application/json"
+        }
+      });
+
+      // تلاش برای دریافت پاسخ JSON
+      const result = await response.json().catch(() => ({}));
+
+      // اگر ارسال موفق بود
+      if (response.ok) {
+
+        message.textContent =
+          "درخواست نوبت شما با موفقیت ارسال شد. کلینیک برای هماهنگی با شما تماس می‌گیرد.";
+
+        message.style.color = "#b8d7b0";
+
+        // خالی کردن فرم
+        form.reset();
+
+      } else {
+
+        // دریافت اولین خطای Formspree
+        const firstError =
+          Array.isArray(result.errors) &&
+          result.errors[0]?.message
+            ? result.errors[0].message
+            : "ارسال فرم انجام نشد. لطفاً دوباره تلاش کنید.";
+
+        message.textContent = firstError;
+        message.style.color = "#d99a9a";
+      }
+
+    } catch (error) {
+
+      // خطای اتصال اینترنت یا Formspree
+      message.textContent =
+        "ارتباط با سرویس ارسال فرم برقرار نشد. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید.";
+
+      message.style.color = "#d99a9a";
+
+    } finally {
+
+      // فعال کردن دوباره دکمه
+      submitButton.disabled = false;
+      submitButton.style.opacity = "";
+
+      // برگرداندن متن اصلی دکمه
+      submitButton.innerHTML = originalButtonHTML;
+    }
+  });
+}
 
 
 // ---------------------------------------------------------
