@@ -803,7 +803,6 @@ body{overflow-x:hidden;}
   display: block;
   transform: none !important;
 }
-}
 
 @media (max-width: 820px) {
   .clinic-visual .image-frame {
