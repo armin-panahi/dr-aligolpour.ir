@@ -138,81 +138,1141 @@ if (form && message) {
   });
 }
 
+// =========================================================
+// PREMIUM RESULTS SLIDER + LIGHTBOX
+// =========================================================
 
-// ---------------------------------------------------------
-// Before / After slider (Swiper-style behaviour, no CDN needed)
-// ---------------------------------------------------------
-(function initBeforeAfterSlider(){
-  const root = document.querySelector('[data-swiper]');
-  if(!root) return;
-  const wrapper = root.querySelector('.ba-swiper-wrapper');
-  const slides = Array.from(root.querySelectorAll('.ba-swiper-slide'));
-  const shell = root.closest('.ba-slider-wrap');
-  const prev = shell?.querySelector('.ba-prev');
-  const next = shell?.querySelector('.ba-next');
-  const pagination = shell?.querySelector('.ba-pagination');
-  if(!wrapper || !slides.length) return;
+(function initResultsSlider(){
 
-  let index = 0;
-  let perView = 1;
-  let timer = null;
+  const shell =
+    document.querySelector(
+      "[data-results-slider]"
+    );
 
-  function getPerView(){
-    if(window.innerWidth >= 900) return 2;
-    return 1;
+  if(!shell) return;
+
+
+  const viewport =
+    shell.querySelector(
+      "[data-ba-viewport]"
+    );
+
+  const track =
+    shell.querySelector(
+      "[data-ba-track]"
+    );
+
+  const slides =
+    Array.from(
+      shell.querySelectorAll(
+        "[data-ba-slide]"
+      )
+    );
+
+
+  const prevButton =
+    shell.querySelector(
+      ".ba-prev"
+    );
+
+  const nextButton =
+    shell.querySelector(
+      ".ba-next"
+    );
+
+
+  const pagination =
+    Array.from(
+      shell.querySelectorAll(
+        ".ba-page-segment"
+      )
+    );
+
+
+  const images =
+    Array.from(
+      shell.querySelectorAll(
+        "[data-result-image]"
+      )
+    );
+
+
+  if(
+    !viewport ||
+    !track ||
+    !slides.length
+  ){
+    return;
   }
-  function getMaxIndex(){ return Math.max(0, slides.length - perView); }
-  function clampIndex(){ index = Math.min(index, getMaxIndex()); }
 
-  function buildPagination(){
-    if(!pagination) return;
-    pagination.innerHTML='';
-    const count=getMaxIndex()+1;
-    for(let i=0;i<count;i++){
-      const b=document.createElement('button');
-      b.className='ba-bullet'+(i===index?' is-active':'');
-      b.type='button';
-      b.setAttribute('aria-label','نمایش اسلاید '+(i+1));
-      b.addEventListener('click',()=>{ goTo(i); restart(); });
-      pagination.appendChild(b);
+
+  let currentSlide = 0;
+
+  let autoplayTimer = null;
+
+  let touchStartX = 0;
+
+  let touchEndX = 0;
+
+  let isDragging = false;
+
+
+  /* =======================================================
+     PERSIAN DIGITS
+     ======================================================= */
+
+  function toFa(value){
+
+    return String(value)
+      .replace(
+        /[0-9]/g,
+        digit => "۰۱۲۳۴۵۶۷۸۹"[digit]
+      );
+
+  }
+
+
+  /* =======================================================
+     RENDER SLIDE
+     ======================================================= */
+
+  function renderSlide(
+    index,
+    animate = true
+  ){
+
+    currentSlide =
+      (
+        index +
+        slides.length
+      ) %
+      slides.length;
+
+
+    track.style.transition =
+      animate
+        ? "transform .82s cubic-bezier(.22,.61,.36,1)"
+        : "none";
+
+
+    track.style.transform =
+      `translate3d(-${currentSlide * 100}%,0,0)`;
+
+
+    slides.forEach(
+      (
+        slide,
+        i
+      ) => {
+
+        slide.classList.toggle(
+          "is-active",
+          i === currentSlide
+        );
+
+        slide.setAttribute(
+          "aria-hidden",
+          i === currentSlide
+            ? "false"
+            : "true"
+        );
+
+      }
+    );
+
+
+    pagination.forEach(
+      (
+        button,
+        i
+      ) => {
+
+        button.classList.toggle(
+          "is-active",
+          i === currentSlide
+        );
+
+        button.setAttribute(
+          "aria-current",
+          i === currentSlide
+            ? "true"
+            : "false"
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     NEXT
+     ======================================================= */
+
+  function nextSlide(){
+
+    renderSlide(
+      currentSlide + 1
+    );
+
+  }
+
+
+  /* =======================================================
+     PREVIOUS
+     ======================================================= */
+
+  function prevSlide(){
+
+    renderSlide(
+      currentSlide - 1
+    );
+
+  }
+
+
+  /* =======================================================
+     AUTOPLAY
+     ======================================================= */
+
+  function stopAutoplay(){
+
+    clearInterval(
+      autoplayTimer
+    );
+
+    autoplayTimer = null;
+
+  }
+
+
+  function startAutoplay(){
+
+    stopAutoplay();
+
+
+    if(
+      document.hidden ||
+      slides.length <= 1
+    ){
+      return;
     }
+
+
+    autoplayTimer =
+      setInterval(
+        nextSlide,
+        5600
+      );
+
   }
 
-  function render(){
-    perView=getPerView();
-    clampIndex();
-    const step = 100 / perView;
-    wrapper.style.transform = `translate3d(${index * step * (document.documentElement.dir === 'rtl' ? 1 : -1)}%,0,0)`;
-    // direction is ltr inside the track; translate left is negative.
-    wrapper.style.transform = `translate3d(-${index * step}%,0,0)`;
-    pagination?.querySelectorAll('.ba-bullet').forEach((b,i)=>b.classList.toggle('is-active',i===index));
-  }
-  function goTo(i){
-    index=(i+getMaxIndex()+1)%(getMaxIndex()+1 || 1);
-    render();
-  }
-  function nextSlide(){goTo(index+1);}
-  function prevSlide(){goTo(index-1);}
-  function restart(){
-    clearInterval(timer);
-    timer=setInterval(nextSlide,5200);
+
+  /* =======================================================
+     BUTTONS
+     ======================================================= */
+
+  nextButton?.addEventListener(
+    "click",
+    () => {
+
+      nextSlide();
+
+      startAutoplay();
+
+    }
+  );
+
+
+  prevButton?.addEventListener(
+    "click",
+    () => {
+
+      prevSlide();
+
+      startAutoplay();
+
+    }
+  );
+
+
+  /* =======================================================
+     PAGINATION
+     ======================================================= */
+
+  pagination.forEach(
+    (
+      button,
+      index
+    ) => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          renderSlide(
+            index
+          );
+
+          startAutoplay();
+
+        }
+      );
+
+    }
+  );
+
+
+  /* =======================================================
+     KEYBOARD
+     ======================================================= */
+
+  viewport.addEventListener(
+    "keydown",
+    event => {
+
+      if(
+        event.key ===
+        "ArrowRight"
+      ){
+
+        event.preventDefault();
+
+        nextSlide();
+
+        startAutoplay();
+
+      }
+
+
+      if(
+        event.key ===
+        "ArrowLeft"
+      ){
+
+        event.preventDefault();
+
+        prevSlide();
+
+        startAutoplay();
+
+      }
+
+
+      if(
+        event.key ===
+        "Home"
+      ){
+
+        event.preventDefault();
+
+        renderSlide(
+          0
+        );
+
+        startAutoplay();
+
+      }
+
+
+      if(
+        event.key ===
+        "End"
+      ){
+
+        event.preventDefault();
+
+        renderSlide(
+          slides.length - 1
+        );
+
+        startAutoplay();
+
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     MOUSE
+     ======================================================= */
+
+  viewport.addEventListener(
+    "mouseenter",
+    stopAutoplay
+  );
+
+
+  viewport.addEventListener(
+    "mouseleave",
+    startAutoplay
+  );
+
+
+  viewport.addEventListener(
+    "focusin",
+    stopAutoplay
+  );
+
+
+  viewport.addEventListener(
+    "focusout",
+    startAutoplay
+  );
+
+
+  /* =======================================================
+     TOUCH SWIPE
+     ======================================================= */
+
+  viewport.addEventListener(
+    "touchstart",
+    event => {
+
+      const touch =
+        event.touches[0];
+
+      touchStartX =
+        touch.clientX;
+
+      touchEndX =
+        touchStartX;
+
+      isDragging = true;
+
+      stopAutoplay();
+
+    },
+    {
+      passive:true
+    }
+  );
+
+
+  viewport.addEventListener(
+    "touchmove",
+    event => {
+
+      if(!isDragging){
+        return;
+      }
+
+
+      touchEndX =
+        event.touches[0].clientX;
+
+    },
+    {
+      passive:true
+    }
+  );
+
+
+  viewport.addEventListener(
+    "touchend",
+    () => {
+
+      if(!isDragging){
+        return;
+      }
+
+
+      const distance =
+        touchEndX -
+        touchStartX;
+
+
+      isDragging = false;
+
+
+      if(
+        Math.abs(distance) >
+        55
+      ){
+
+        if(distance < 0){
+
+          nextSlide();
+
+        }else{
+
+          prevSlide();
+
+        }
+
+      }
+
+
+      startAutoplay();
+
+    },
+    {
+      passive:true
+    }
+  );
+
+
+  /* =======================================================
+     INIT LIGHTBOX
+     ======================================================= */
+
+  const lightbox =
+    document.createElement(
+      "div"
+    );
+
+
+  lightbox.className =
+    "ba-lightbox";
+
+
+  lightbox.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+
+  lightbox.innerHTML = `
+
+    <div
+      class="ba-lightbox-stage"
+      role="dialog"
+      aria-modal="true"
+      aria-label="نمایش بزرگ تصویر نمونه‌کار"
+    >
+
+      <div class="ba-lightbox-top">
+
+        <span
+          class="ba-lightbox-counter"
+          data-lightbox-counter
+        >
+          ۰۱ / ۱۰
+        </span>
+
+
+        <button
+          class="ba-lightbox-close"
+          type="button"
+          aria-label="بستن"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <button
+        class="ba-lightbox-arrow ba-lightbox-prev"
+        type="button"
+        aria-label="تصویر قبلی"
+      >
+        ←
+      </button>
+
+
+      <img
+        class="ba-lightbox-image"
+        data-lightbox-image
+        alt=""
+      >
+
+
+      <button
+        class="ba-lightbox-arrow ba-lightbox-next"
+        type="button"
+        aria-label="تصویر بعدی"
+      >
+        →
+      </button>
+
+
+      <div class="ba-lightbox-controls">
+
+        <button
+          class="ba-lightbox-control"
+          type="button"
+          data-zoom-out
+          aria-label="کوچک کردن"
+        >
+          −
+        </button>
+
+
+        <button
+          class="ba-lightbox-control"
+          type="button"
+          data-zoom-reset
+          aria-label="بازنشانی زوم"
+        >
+          100%
+        </button>
+
+
+        <button
+          class="ba-lightbox-control"
+          type="button"
+          data-zoom-in
+          aria-label="بزرگ کردن"
+        >
+          +
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  document.body.appendChild(
+    lightbox
+  );
+
+
+  const lightboxImage =
+    lightbox.querySelector(
+      "[data-lightbox-image]"
+    );
+
+
+  const counter =
+    lightbox.querySelector(
+      "[data-lightbox-counter]"
+    );
+
+
+  const closeButton =
+    lightbox.querySelector(
+      ".ba-lightbox-close"
+    );
+
+
+  const lightboxPrev =
+    lightbox.querySelector(
+      ".ba-lightbox-prev"
+    );
+
+
+  const lightboxNext =
+    lightbox.querySelector(
+      ".ba-lightbox-next"
+    );
+
+
+  const zoomIn =
+    lightbox.querySelector(
+      "[data-zoom-in]"
+    );
+
+
+  const zoomOut =
+    lightbox.querySelector(
+      "[data-zoom-out]"
+    );
+
+
+  const zoomReset =
+    lightbox.querySelector(
+      "[data-zoom-reset]"
+    );
+
+
+  let currentImageIndex = 0;
+
+  let zoomLevel = 1;
+
+
+  const minZoom = 1;
+
+  const maxZoom = 3;
+
+  const zoomStep = .25;
+
+
+  /* =======================================================
+     GET IMAGE INFO
+     ======================================================= */
+
+  function getImageData(index){
+
+    const card =
+      images[index];
+
+
+    const image =
+      card?.querySelector(
+        "img"
+      );
+
+
+    return {
+      src:
+        image?.src || "",
+
+      alt:
+        image?.alt || ""
+    };
+
   }
 
-  next?.addEventListener('click',()=>{nextSlide();restart();});
-  prev?.addEventListener('click',()=>{prevSlide();restart();});
-  root.addEventListener('mouseenter',()=>clearInterval(timer));
-  root.addEventListener('mouseleave',restart);
-  root.addEventListener('touchstart',()=>clearInterval(timer),{passive:true});
-  root.addEventListener('touchend',restart,{passive:true});
-  let resizeTimer;
-  window.addEventListener('resize',()=>{
-    clearTimeout(resizeTimer);
-    resizeTimer=setTimeout(()=>{buildPagination();render();restart();},120);
-  });
 
-  buildPagination();
-  render();
-  restart();
+  /* =======================================================
+     UPDATE LIGHTBOX
+     ======================================================= */
+
+  function updateLightboxImage(
+    index
+  ){
+
+    currentImageIndex =
+      (
+        index +
+        images.length
+      ) %
+      images.length;
+
+
+    const data =
+      getImageData(
+        currentImageIndex
+      );
+
+
+    lightboxImage.src =
+      data.src;
+
+
+    lightboxImage.alt =
+      data.alt;
+
+
+    counter.textContent =
+      `${toFa(currentImageIndex + 1)} / ${toFa(images.length)}`;
+
+
+    resetZoom();
+
+  }
+
+
+  /* =======================================================
+     OPEN
+     ======================================================= */
+
+  function openLightbox(
+    index
+  ){
+
+    stopAutoplay();
+
+
+    updateLightboxImage(
+      index
+    );
+
+
+    lightbox.classList.add(
+      "is-open"
+    );
+
+
+    lightbox.setAttribute(
+      "aria-hidden",
+      "false"
+    );
+
+
+    document.body.style.overflow =
+      "hidden";
+
+  }
+
+
+  /* =======================================================
+     CLOSE
+     ======================================================= */
+
+  function closeLightbox(){
+
+    lightbox.classList.remove(
+      "is-open"
+    );
+
+
+    lightbox.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+
+    document.body.style.overflow =
+      "";
+
+
+    startAutoplay();
+
+  }
+
+
+  /* =======================================================
+     IMAGE CLICK
+     ======================================================= */
+
+  images.forEach(
+    (
+      card,
+      index
+    ) => {
+
+      card.addEventListener(
+        "click",
+        () => {
+
+          openLightbox(
+            index
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+  /* =======================================================
+     LIGHTBOX NAVIGATION
+     ======================================================= */
+
+  function nextLightboxImage(){
+
+    updateLightboxImage(
+      currentImageIndex + 1
+    );
+
+  }
+
+
+  function prevLightboxImage(){
+
+    updateLightboxImage(
+      currentImageIndex - 1
+    );
+
+  }
+
+
+  lightboxNext.addEventListener(
+    "click",
+    nextLightboxImage
+  );
+
+
+  lightboxPrev.addEventListener(
+    "click",
+    prevLightboxImage
+  );
+
+
+  closeButton.addEventListener(
+    "click",
+    closeLightbox
+  );
+
+
+  /* =======================================================
+     CLOSE ON BACKDROP
+     ======================================================= */
+
+  lightbox.addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target ===
+        lightbox
+      ){
+
+        closeLightbox();
+
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     KEYBOARD LIGHTBOX
+     ======================================================= */
+
+  document.addEventListener(
+    "keydown",
+    event => {
+
+      if(
+        !lightbox.classList.contains(
+          "is-open"
+        )
+      ){
+        return;
+      }
+
+
+      if(
+        event.key ===
+        "Escape"
+      ){
+
+        closeLightbox();
+
+      }
+
+
+      if(
+        event.key ===
+        "ArrowRight"
+      ){
+
+        event.preventDefault();
+
+        nextLightboxImage();
+
+      }
+
+
+      if(
+        event.key ===
+        "ArrowLeft"
+      ){
+
+        event.preventDefault();
+
+        prevLightboxImage();
+
+      }
+
+
+      if(
+        event.key ===
+        "+" ||
+        event.key === "="
+      ){
+
+        zoomImage(
+          zoomLevel +
+          zoomStep
+        );
+
+      }
+
+
+      if(
+        event.key ===
+        "-"
+      ){
+
+        zoomImage(
+          zoomLevel -
+          zoomStep
+        );
+
+      }
+
+
+      if(
+        event.key ===
+        "0"
+      ){
+
+        resetZoom();
+
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     ZOOM
+     ======================================================= */
+
+  function zoomImage(
+    value
+  ){
+
+    zoomLevel =
+      Math.max(
+        minZoom,
+        Math.min(
+          maxZoom,
+          value
+        )
+      );
+
+
+    lightboxImage.style.transform =
+      `scale(${zoomLevel})`;
+
+
+    lightbox.classList.toggle(
+      "is-zoomed",
+      zoomLevel > 1
+    );
+
+  }
+
+
+  function resetZoom(){
+
+    zoomLevel = 1;
+
+    lightboxImage.style.transform =
+      "scale(1)";
+
+
+    lightbox.classList.remove(
+      "is-zoomed"
+    );
+
+  }
+
+
+  zoomIn.addEventListener(
+    "click",
+    () => {
+
+      zoomImage(
+        zoomLevel +
+        zoomStep
+      );
+
+    }
+  );
+
+
+  zoomOut.addEventListener(
+    "click",
+    () => {
+
+      zoomImage(
+        zoomLevel -
+        zoomStep
+      );
+
+    }
+  );
+
+
+  zoomReset.addEventListener(
+    "click",
+    resetZoom
+  );
+
+
+  /* =======================================================
+     MOUSE WHEEL ZOOM
+     ======================================================= */
+
+  lightboxImage.addEventListener(
+    "wheel",
+    event => {
+
+      event.preventDefault();
+
+
+      if(
+        event.deltaY < 0
+      ){
+
+        zoomImage(
+          zoomLevel +
+          zoomStep
+        );
+
+      }else{
+
+        zoomImage(
+          zoomLevel -
+          zoomStep
+        );
+
+      }
+
+    },
+    {
+      passive:false
+    }
+  );
+
+
+  /* =======================================================
+     DOUBLE CLICK
+     ======================================================= */
+
+  lightboxImage.addEventListener(
+    "dblclick",
+    () => {
+
+      if(
+        zoomLevel === 1
+      ){
+
+        zoomImage(2);
+
+      }else{
+
+        resetZoom();
+
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     VISIBILITY
+     ======================================================= */
+
+  document.addEventListener(
+    "visibilitychange",
+    () => {
+
+      if(document.hidden){
+
+        stopAutoplay();
+
+      }else{
+
+        if(
+          !lightbox.classList.contains(
+            "is-open"
+          )
+        ){
+
+          startAutoplay();
+
+        }
+
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     INIT
+     ======================================================= */
+
+  renderSlide(
+    0,
+    false
+  );
+
+
+  startAutoplay();
+
+
 })();
 document.addEventListener("DOMContentLoaded", function () {
   const elements = document.querySelectorAll("body *");
